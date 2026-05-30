@@ -15,15 +15,30 @@ export default function TodoList() {
     }
 
     let addTodo = () => {
-        setTodos((prevTodos) => {
-            return [...prevTodos , {task: newTodo , id: uuidv4()}];
-        });
-        setNewTodo("");
+        if(newTodo.trim()) {
+            setTodos((prevTodos) => {
+                return [...prevTodos , {task: newTodo.trim() , id: uuidv4() , isDone: false}];
+            });
+            setNewTodo("");
+        }
     }
 
     let deleteTodo = (id) => {
         // console.log(newTodo);
         setTodos((prevTodos) => prevTodos.filter((task) => task.id != id));
+    }
+
+    let markasDone = (id) => {
+        setTodos((prevTodos) => prevTodos.map((todo) => {
+            if(todo.id === id) {
+                return {
+                    ...todo , 
+                    isDone: true,
+                };
+            } else {
+                return todo;
+            }
+        }));
     }
 
     return (
@@ -38,8 +53,9 @@ export default function TodoList() {
                 {
                     todos.map((task) => (// if we use () : implict return , if {} used, need to explicitly write return keyword
                         <li key={task.id}>
-                            <span>{task.task}</span> &nbsp;&nbsp;
-                            <button onClick={() => deleteTodo(task.id)}>delete</button>
+                            <span style={{textDecoration: (task.isDone? "Line-Through" : "none")}}>{task.task}</span> &nbsp;&nbsp;
+                            <button onClick={() => deleteTodo(task.id)}>delete</button> &nbsp;&nbsp;
+                            <button onClick={() => markasDone(task.id)}>mark as Done</button>
                         </li>
                     ))
                 }
